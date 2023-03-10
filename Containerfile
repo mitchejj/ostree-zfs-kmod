@@ -7,7 +7,7 @@ FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as kernel-query
 RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-version.txt
 
 # Using https://openzfs.github.io/openzfs-docs/Developer%20Resources/Custom%20Packages.html
-FROM registry.fedoraproject.org/fedora:latest as builder
+FROM registry.fedoraproject.org/fedora:${BASE_VERSION} as builder
 ARG ZFS_VERSION
 
 

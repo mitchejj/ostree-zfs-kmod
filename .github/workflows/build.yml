@@ -49,10 +49,10 @@ jobs:
           - 37
         zfs_version:
           - ${{ needs.zfs_versions.outputs.latest }}
-        include:
-          - coreos_version: stable
-            is_latest_version: true
-            is_stable_version: true
+        # include:
+        #   - coreos_version: stable
+        #     is_latest_version: true
+        #     is_stable_version: true
          #- coreos_version: testing
          #  is_latest_version: true
          #  is_stable_version: false

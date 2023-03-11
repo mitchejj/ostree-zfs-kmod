@@ -1,4 +1,4 @@
-name: build-ucore
+name: build-zfs-kmods
 on:
   pull_request:
     branches:
@@ -45,8 +45,7 @@ jobs:
       matrix:
         image_name:
           - zfs-kmods
-        coreos_version:
-          - 37
+        version: [37, 38]
         zfs_version:
           - ${{ needs.zfs_versions.outputs.latest }}
         # include:
@@ -67,7 +66,7 @@ jobs:
         run: |
           # Generate a timestamp for creating an image version history
           TIMESTAMP="$(date +%Y%m%d)"
-          VARIANT="${{ matrix.coreos_version }}"
+          VARIANT="${{ matrix.version }}"
 
           COMMIT_TAGS=()
           BUILD_TAGS=()
@@ -134,7 +133,7 @@ jobs:
             ${{ matrix.image_name }}
           labels: |
             org.opencontainers.image.title=${{ matrix.image_name }}
-            org.opencontainers.image.description=A layer with driver RPMs for CoreOS
+            org.opencontainers.image.description=A layer with driver RPMs for fedora-ostree-desktops
             io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ matrix.image_name }}/main/README.md
       # Build image using Buildah action
       - name: Build Image
@@ -148,7 +147,7 @@ jobs:
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            COREOS_VERSION=${{ matrix.coreos_version }}
+            COREOS_VERSION=${{ matrix.version }}
             ZFS_VERSION=${{ matrix.zfs_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false

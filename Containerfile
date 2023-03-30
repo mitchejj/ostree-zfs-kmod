@@ -29,6 +29,11 @@ RUN curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${ZFS_VERSIO
 
 WORKDIR /tmp/zfs
 # build
+
+# patch for 6.2.x
+run curl -L -O https://patch-diff.githubusercontent.com/raw/openzfs/zfs/pull/14668.patch \
+patch -p1 -i 14668.patch
+
 RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \
         -with-linux-obj=/usr/src/kernels/$(cat /kernel-version.txt)/ \

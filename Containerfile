@@ -31,7 +31,7 @@ WORKDIR /tmp/zfs
 # build
 
 # patch for 6.2.x
-run curl -L -O https://patch-diff.githubusercontent.com/raw/openzfs/zfs/pull/14668.patch \
+run curl -L -O https://patch-diff.githubusercontent.com/raw/openzfs/zfs/pull/14668.patch && \
 patch -p1 -i 14668.patch
 
 RUN ./configure \

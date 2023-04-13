@@ -1,4 +1,4 @@
-ARG BASE_VERSION="${BASE_VERSION:-38}"
+ARG BASE_VERSION="${BASE_VERSION:-37}"
 ARG ZFS_VERSION="${ZFS_VERSION}"
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as kernel-query

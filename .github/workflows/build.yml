@@ -45,7 +45,7 @@ jobs:
       matrix:
         image_name:
           - zfs-kmods
-        version: [37]
+        version: [38]
         zfs_version:
           - ${{ needs.zfs_versions.outputs.latest }}
         # include:

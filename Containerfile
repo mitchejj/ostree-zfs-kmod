@@ -40,7 +40,7 @@ RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \
         -with-linux-obj=/usr/src/kernels/$(cat /kernel-version.txt)/ \
     && make -j 1 rpm-utils rpm-kmod \
-    | (cat config.log && exit 1)
+    || (cat config.log && exit 1)
 
 # sort into directories for easier install later
 RUN mkdir -p /tmp/rpms/{debug,devel,other,src} \

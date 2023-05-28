@@ -1,7 +1,12 @@
-ARG BASE_VERSION="${BASE_VERSION}"
+ARG BASE_VERSION="${BASE_VERSION:-38}"
 ARG ZFS_VERSION="${ZFS_VERSION}"
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
+
+
+ARG BASE_VERSION="${BASE_VERSION}"
+ARG ZFS_VERSION="${ZFS_VERSION}"
+
 WORKDIR /tmp
 
 #We can't use the `uname -r` as it will pick up the host kernel version

@@ -1,43 +1,42 @@
-ARG BASE_VERSION="${BASE_VERSION:-38}"
+ARG BASE_VERSION="${BASE_VERSION}"
 ARG ZFS_VERSION="${ZFS_VERSION}"
 
-FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as kernel-query
+FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
+WORKDIR /tmp
 
 #We can't use the `uname -r` as it will pick up the host kernel version
 RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-version.txt
 
-# Using https://openzfs.github.io/openzfs-docs/Developer%20Resources/Custom%20Packages.html
-FROM registry.fedoraproject.org/fedora:${BASE_VERSION} as builder
-ARG ZFS_VERSION
+# # Using https://openzfs.github.io/openzfs-docs/Developer%20Resources/Custom%20Packages.html
+# FROM registry.fedoraproject.org/fedora:${BASE_VERSION} as builder
+# ARG ZFS_VERSION
+
+RUN mkdir -p /var/lib/alternatives
 
 
 COPY --from=kernel-query /kernel-version.txt /kernel-version.txt
 
-WORKDIR /etc/yum.repos.d
-RUN BUILDER_VERSION=$(grep VERSION_ID /etc/os-release | cut -f2 -d=) \
-    && curl -L -O https://src.fedoraproject.org/rpms/fedora-repos/raw/f${BUILDER_VERSION}/f/fedora-updates-archive.repo \
-    && sed -i 's/enabled=AUTO_VALUE/enabled=true/' fedora-updates-archive.repo
-RUN dnf install -y jq dkms gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel \
+# WORKDIR /etc/yum.repos.d
+# RUN BUILDER_VERSION=$(grep VERSION_ID /etc/os-release | cut -f2 -d=) \
+#     && curl -L -O https://src.fedoraproject.org/rpms/fedora-repos/raw/f${BUILDER_VERSION}/f/fedora-updates-archive.repo \
+#     && sed -i 's/enabled=AUTO_VALUE/enabled=true/' fedora-updates-archive.repo
+RUN rpm-ostree install -y jq dkms gcc make autoconf automake libtool rpm-build libtirpc-devel libblkid-devel \
     libuuid-devel libudev-devel openssl-devel zlib-devel libaio-devel libattr-devel elfutils-libelf-devel \
     kernel-$(cat /kernel-version.txt) kernel-modules-$(cat /kernel-version.txt) kernel-devel-$(cat /kernel-version.txt) \
     python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 
-WORKDIR /
-RUN curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${ZFS_VERSION}/zfs-${ZFS_VERSION}.tar.gz \
-    && tar xzf zfs-${ZFS_VERSION}.tar.gz \
-    && mv zfs-${ZFS_VERSION} /tmp/zfs
+RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \ 
+    curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${ZFS_VERSION}/zfs-${ZFS_VERSION}.tar.gz \
+    && tar xzf zfs-${ZFS_VERSION}.tar.gz
 
-WORKDIR /tmp/zfs
-# build
-
-# # patch for 6.2.x
-# run curl -L -O https://patch-diff.githubusercontent.com/raw/openzfs/zfs/pull/14668.patch && \
-# patch -p1 -i 14668.patch
+WORKDIR /tmp/zfs-${ZFS_VERSION}
 
 RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \
         -with-linux-obj=/usr/src/kernels/$(cat /kernel-version.txt)/ \
-    && make -j 1 rpm-utils rpm-kmod
+    && make -j 1 rpm-utils rpm-kmod \
+    | (cat config.log && exit 1)
+
 # sort into directories for easier install later
 RUN mkdir -p /tmp/rpms/{debug,devel,other,src} \
     && mv *src.rpm /tmp/rpms/src/ \

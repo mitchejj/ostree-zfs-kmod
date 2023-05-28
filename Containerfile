@@ -19,7 +19,7 @@ RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-versi
 RUN mkdir -p /var/lib/alternatives
 
 
-COPY --from=kernel-query /kernel-version.txt /kernel-version.txt
+# COPY --from=kernel-query /kernel-version.txt /kernel-version.txt
 
 # WORKDIR /etc/yum.repos.d
 # RUN BUILDER_VERSION=$(grep VERSION_ID /etc/os-release | cut -f2 -d=) \

@@ -1,10 +1,12 @@
 # ostree-zfs-kmods
 
-<Build badge here>
+[![build-zfs-kmods](https://github.com/mitchejj/ostree-zfs-kmod/actions/workflows/build.yml/badge.svg)](https://github.com/mitchejj/ostree-zfs-kmod/actions/workflows/build.yml)
 
 ## What is this?
 
 A fork of [bsherman/ucore-kmods](https://github.com/bsherman/ucore-kmods); to provide zfs kernel modules for use in [Fedora-ostree-desktops](https://quay.io/organization/fedora-ostree-desktops) images.
+
+The `build-zfs-kmods` work flow is scheduled run daily at 4:15 UTC, approximately after the `fedora-ostree-desktops` image is produced. 
 
 ## Features
 

@@ -14,24 +14,24 @@ on:
 
 env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
+    # image_name: zfs-kmods
 jobs:
-  zfs_versions:
-    runs-on: ubuntu-latest
-    outputs:
-      latest: ${{ steps.latest.outputs.version }}
-      previous: ${{ steps.previous.outputs.version }}
-    steps:
-      # Use cURL to fetch the given URL, saving the response to `data.json`
-      - name: Fetch zfs versions
-        # Uses project_id from: https://release-monitoring.org/project/11706/
-        run: curl "https://release-monitoring.org/api/v2/versions/?project_id=11706" -o data.json
-      - name: Get latest zfs version
-        id: latest
-        run: echo "version=$(jq -r '.stable_versions[0]' data.json)" >> $GITHUB_OUTPUT
-      - name: Get previous zfs version
-        id: previous
-        run: echo "version=$(jq -r '.stable_versions[1]' data.json)" >> $GITHUB_OUTPUT
+  # zfs_versions:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     latest: ${{ steps.latest.outputs.version }}
+  #     previous: ${{ steps.previous.outputs.version }}
+  #   steps:
+  #     # Use cURL to fetch the given URL, saving the response to `data.json`
+  #     - name: Fetch zfs versions
+  #       # Uses project_id from: https://release-monitoring.org/project/11706/
+  #       run: curl "https://release-monitoring.org/api/v2/versions/?project_id=11706" -o data.json
+  #     - name: Get latest zfs version
+  #       id: latest
+  #       run: echo "version=$(jq -r '.stable_versions[0]' data.json)" >> $GITHUB_OUTPUT
+  #     - name: Get previous zfs version
+  #       id: previous
+  #       run: echo "version=$(jq -r '.stable_versions[1]' data.json)" >> $GITHUB_OUTPUT
   push-ghcr:
     name: Build and push image
     runs-on: ubuntu-22.04
@@ -43,8 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image_name:
-          - zfs-kmods
+        image_name: [zfs-kmods]
         version: [38]
         zfs_version:
           - ${{ needs.zfs_versions.outputs.latest }}
@@ -59,6 +58,9 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v3
+
+      - name: Matrix Variables
+        run: echo "IMAGE_NAME=${{ matrix.image_name }}" >> $GITHUB_ENV
 
       - name: Generate tags
         id: generate-tags
@@ -143,12 +145,13 @@ jobs:
           containerfiles: |
             ./Containerfile
           # Syntax: https://docs.github.com/en/actions/learn-github-actions/expressions#format
-          image: ${{ matrix.image_name }}
+          image: ${{ env.IMAGE_NAME }}
           tags: |
             ${{ steps.generate-tags.outputs.alias_tags }}
           build-args: |
-            COREOS_VERSION=${{ matrix.version }}
-            ZFS_VERSION=${{ matrix.zfs_version }}
+            IMAGE_NAME=${{ env.IMAGE_NAME }}
+            BASE_VERSION=${{ matrix.version }}
+            # ZFS_VERSION=${{ matrix.zfs_version }}
           labels: ${{ steps.meta.outputs.labels }}
           oci: false
 

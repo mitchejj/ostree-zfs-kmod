@@ -1,13 +1,13 @@
 ARG BASE_VERSION="${BASE_VERSION:-38}"
 # ARG ZFS_VERSION="${ZFS_VERSION}"
-ARG ZFS_VERSION=2.1.13
+ARG VERSION=2.1.13
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
 
 
 ARG BASE_VERSION="${BASE_VERSION}"
 #ARG ZFS_VERSION="${ZFS_VERSION}"
-ARG ZFS_VERSION=2.1.13
+ARG VERSION=2.1.13
 
 WORKDIR /tmp
 
@@ -32,9 +32,9 @@ RUN rpm-ostree install -y jq dkms gcc make autoconf automake libtool rpm-build l
     kernel-$(cat /kernel-version.txt) kernel-modules-$(cat /kernel-version.txt) kernel-devel-$(cat /kernel-version.txt) \
     python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 
-RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \ 
-    curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${ZFS_VERSION}/zfs-${ZFS_VERSION}.tar.gz \
-    && tar xzf zfs-${ZFS_VERSION}.tar.gz
+RUN echo "getting zfs-${VERSION}.tar.gz" && \ 
+    curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${VERSION}/zfs-${VERSION}.tar.gz \
+    && tar xzf zfs-${VERSION}.tar.gz
 
 WORKDIR /tmp/zfs-${ZFS_VERSION}
 

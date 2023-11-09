@@ -15,6 +15,7 @@ on:
 env:
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
     # image_name: zfs-kmods
+
 jobs:
   # zfs_versions:
   #   runs-on: ubuntu-latest
@@ -35,7 +36,7 @@ jobs:
   push-ghcr:
     name: Build and push image
     runs-on: ubuntu-22.04
-    needs: zfs_versions
+    # needs: zfs_versions
     permissions:
       contents: read
       packages: write

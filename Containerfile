@@ -37,7 +37,8 @@ RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \
       curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-2.1.13/zfs-2.1.13.tar.gz \
       && tar xzf zfs-2.1.13.tar.gz
 
-WORKDIR /tmp/zfs-${ZFS_VERSION}
+# WORKDIR /tmp/zfs-${ZFS_VERSION}
+WORKDIR /tmp/zfs-2.1.13
 
 RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \

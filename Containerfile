@@ -1,5 +1,6 @@
 ARG BASE_VERSION="${BASE_VERSION:-38}"
-ARG ZFS_VERSION="${ZFS_VERSION}"
+# ARG ZFS_VERSION="${ZFS_VERSION}"
+ARG ZFS_VERSION=2.1.13
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
 

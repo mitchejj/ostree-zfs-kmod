@@ -1,6 +1,6 @@
 ARG BASE_VERSION="${BASE_VERSION:-38}"
-ARG ZFS_VERSION="${ZFS_VERSION:-2.1.14}"
-ARG ZFS_VERSION=2.1.14
+ARG ZFS_VERSION="${ZFS_VERSION:-2.2.2}"
+ARG ZFS_VERSION=2.2.2
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
 
@@ -31,14 +31,14 @@ RUN rpm-ostree install -y jq dkms gcc make autoconf automake libtool rpm-build l
     kernel-$(cat /kernel-version.txt) kernel-modules-$(cat /kernel-version.txt) kernel-devel-$(cat /kernel-version.txt) \
     python3 python3-devel python3-setuptools python3-cffi libffi-devel git ncompress libcurl-devel
 
-RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \ 
-    # curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-${ZFS_VERSION}/zfs-${ZFS_VERSION}.tar.gz \
-    # && tar xzf zfs-${ZFS_VERSION}.tar.gz
-      curl -L -O https://github.com/openzfs/zfs/releases/download/zfs-2.1.14/zfs-2.1.14.tar.gz \
-      && tar xzf zfs-2.1.14.tar.gz
+
+RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \
+  curl -L -O \
+  https://github.com/openzfs/zfs/releases/download/zfs-2.2.2/zfs-2.2.2.tar.gz \
+  && tar xzf zfs-2.2.2.tar.gz
 
 # WORKDIR /tmp/zfs-${ZFS_VERSION}
-WORKDIR /tmp/zfs-2.1.14
+WORKDIR /tmp/zfs-2.2.2
 
 RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \

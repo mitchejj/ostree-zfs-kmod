@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         image_name: [zfs-kmods]
-        version: [38]
+        version: [39]
         zfs_version:
           - ${{ needs.zfs_versions.outputs.latest }}
         # include:

@@ -1,6 +1,6 @@
 ARG BASE_VERSION="${BASE_VERSION:-39}"
-ARG ZFS_VERSION="${ZFS_VERSION:-2.2.2}"
-ARG ZFS_VERSION=2.2.2
+ARG ZFS_VERSION="${ZFS_VERSION:-2.2.3}"
+ARG ZFS_VERSION=2.2.3
 
 FROM quay.io/fedora-ostree-desktops/base:${BASE_VERSION} as builder
 
@@ -9,6 +9,7 @@ ARG BASE_VERSION="${BASE_VERSION}"
 ARG ZFS_VERSION="${ZFS_VERSION}"
 # ARG ZFS_VERSION=2.1.14
 WORKDIR /tmp
+
 
 #We can't use the `uname -r` as it will pick up the host kernel version
 RUN rpm -qa kernel --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}' > /kernel-version.txt
@@ -34,11 +35,11 @@ RUN rpm-ostree install -y jq dkms gcc make autoconf automake libtool rpm-build l
 
 RUN echo "getting zfs-${ZFS_VERSION}.tar.gz" && \
   curl -L -O \
-  https://github.com/openzfs/zfs/releases/download/zfs-2.2.2/zfs-2.2.2.tar.gz \
-  && tar xzf zfs-2.2.2.tar.gz
+  https://github.com/openzfs/zfs/releases/download/zfs-2.2.3/zfs-2.2.3.tar.gz \
+  && tar xzf zfs-2.2.3.tar.gz
 
 # WORKDIR /tmp/zfs-${ZFS_VERSION}
-WORKDIR /tmp/zfs-2.2.2
+WORKDIR /tmp/zfs-2.2.3
 
 RUN ./configure \
         -with-linux=/usr/src/kernels/$(cat /kernel-version.txt)/ \

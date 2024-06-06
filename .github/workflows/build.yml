@@ -17,22 +17,22 @@ env:
     # image_name: zfs-kmods
 
 jobs:
-  # zfs_versions:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     latest: ${{ steps.latest.outputs.version }}
-  #     previous: ${{ steps.previous.outputs.version }}
-  #   steps:
-  #     # Use cURL to fetch the given URL, saving the response to `data.json`
-  #     - name: Fetch zfs versions
-  #       # Uses project_id from: https://release-monitoring.org/project/11706/
-  #       run: curl "https://release-monitoring.org/api/v2/versions/?project_id=11706" -o data.json
-  #     - name: Get latest zfs version
-  #       id: latest
-  #       run: echo "version=$(jq -r '.stable_versions[0]' data.json)" >> $GITHUB_OUTPUT
-  #     - name: Get previous zfs version
-  #       id: previous
-  #       run: echo "version=$(jq -r '.stable_versions[1]' data.json)" >> $GITHUB_OUTPUT
+  zfs_versions:
+    runs-on: ubuntu-latest
+    outputs:
+      latest: ${{ steps.latest.outputs.version }}
+      previous: ${{ steps.previous.outputs.version }}
+    steps:
+      # Use cURL to fetch the given URL, saving the response to `data.json`
+      - name: Fetch zfs versions
+        # Uses project_id from: https://release-monitoring.org/project/11706/
+        run: curl "https://release-monitoring.org/api/v2/versions/?project_id=11706" -o data.json
+      - name: Get latest zfs version
+        id: latest
+        run: echo "version=$(jq -r '.stable_versions[0]' data.json)" >> $GITHUB_OUTPUT
+      - name: Get previous zfs version
+        id: previous
+        run: echo "version=$(jq -r '.stable_versions[1]' data.json)" >> $GITHUB_OUTPUT
   push-ghcr:
     name: Build zfs and push image
     runs-on: ubuntu-latest
@@ -45,8 +45,11 @@ jobs:
       fail-fast: false
       matrix:
         image_name: [zfs-kmods]
-        version: [39, rawhide]
+        version: [39, 40, rawhide]
         include:
+          - version: 39
+            is_latest_version: false
+            is_stable_version: true
           - version: 40
             is_latest_version: true
             is_stable_version: true
